@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>poor Branson-a design driven team</title>
+  <link rel="icon" href="./favicon-64x64.png" type="image/x-icon" />
+  <link rel="shortcut icon" href="./favicon-64x64.png" type="image/x-icon" />
+    <style>
+  @font-face {
+    font-family: _lobster;
+    src: url("./9b458667868d6aba73f3b036035b2511.ttf");
+  }
+
+/*  @font-face {
+    font-family: _encode;
+    src: url("./EncodeSansCondensed-Regular.ttf");
+  }*/
+
+  @font-face {
+    font-family: _barlow;
+    src: url("./4d598f9d93c843bc07c07cdff9b8c8ed.ttf");
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .progress-bar {
+    width: 70%;
+    margin: auto;
+    height: 2px;
+    margin-top: 30%;
+  }
+
+  .progress-inn {
+    width: 0;
+    height: inherit;
+    background-color: #008bff;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar">
+    <div class="progress-inn"></div>
+  </div>
+  <div id="root"></div>
+</body>
+<script>
+    var step = new Event("loaded")
+    var now_is = 0
+
+    document.addEventListener("loaded", () => {
+      now_is++
+      document.querySelector(".progress-inn")
+        .style.width = (now_is / 10) * 100 + "%"
+
+      if (now_is === 7) {
+        document.querySelector(".progress-bar")
+          .style.display = "none"
+        document.dispatchEvent(new Event("complete"))
+      }
+    })
+
+    function LOADSTEPS() {
+      document.dispatchEvent(step)
+    }
+  </script>
+  <script>window.LOADSTEPS()</script>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bulma/0.6.1/css/bulma.min.css">
+  <script>window.LOADSTEPS()</script>
+  <script src="https://cdn.bootcss.com/fontfaceobserver/2.0.13/fontfaceobserver.js"></script>
+  <script>window.LOADSTEPS()</script>
+  <script src="https://cdn.bootcss.com/react/16.2.0/umd/react.production.min.js"></script>
+  <script>window.LOADSTEPS()</script>
+  <script src="https://cdn.bootcss.com/react-dom/16.2.0/umd/react-dom.production.min.js"></script>
+  <script>window.LOADSTEPS()</script>
+<script>
+  var _lobster = new FontFaceObserver("_lobster")
+  var _barlow = new FontFaceObserver("_barlow")
+
+  Promise.all([_lobster.load(null, 30000), _barlow.load(null, 30000)])
+    .then(() => {
+      LOADSTEPS()
+    }, () => {
+      console.error("load font fail")
+    })
+</script>
+<script src="bundle.js"></script>
+<script>window.LOADSTEPS()</script>
+</html>
