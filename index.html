@@ -395,6 +395,113 @@
 <!-- Table of Contents -->
 
   
+    <article id="post-ECMA Script 原型与对象"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2017/11/13/ECMA Script 原型与对象/">ECMA Script 原型与对象</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	<a href="/2017/11/13/ECMA Script 原型与对象/" class="article-date">
+	  <time datetime="2017-11-13T11:25:43.000Z" itemprop="datePublished">November 13, 2017</time>
+	</a>
+
+       
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="关于ECMA-Script中的对象"><a href="#关于ECMA-Script中的对象" class="headerlink" title="关于ECMA Script中的对象"></a>关于ECMA Script中的对象</h4><p>  通常所说的 <code>面向对象</code> 的标志，是语言当中存在类的概念。虽然ES6当中引入了class关键字，但在本质上，它依旧是原型对象的 <code>语法糖</code>。</p>
+<p><strong>ECMA对于对象的定义是</strong></p>
+<blockquote>
+<p>无需属性的集合，其属性可以包含基本值、对象或函数  </p>
+</blockquote>
+<p>每一个对象都是基于一个<code>引用类型</code>创建的，这个引用类型可以是原生类型(如<code>Array</code> <code>Buffer</code> <code>String</code>)，也可以是自定义类型。</p>
+<hr>
+<h4 id="对象的创建方式"><a href="#对象的创建方式" class="headerlink" title="对象的创建方式"></a>对象的创建方式</h4><p>对象的创建方式有很多，JavaScript的函数本身也是一种对象，其基本数据类型 <code>number</code> <code>string</code> <code>boolean</code>也是对象，不同之处在于，基本类型是特殊的<code>Wrapper Object</code> -&gt; <code>包装对象</code></p>
+<ul>
+<li>对象字面量  </li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> oliver = &#123;</span><br><span class="line">    name: <span class="string">"oliver"</span>,</span><br><span class="line">    age: <span class="number">22</span>,</span><br><span class="line">    sex: <span class="string">"male"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>构造函数</li>
+</ul>
+<p>面向对象编程的一个特色便是<code>构造函数</code>与<code>析构函数</code>。在JavaScript当中，没有类的概念，因此构造函数需要手动实现。</p>
+<ul>
+<li>早期  </li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Man</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> man = &#123;</span><br><span class="line">        name: name,</span><br><span class="line">        age: age，</span><br><span class="line">        greet: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"hey"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> man</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> jack = Man(<span class="string">"jack"</span>, <span class="number">21</span>)</span><br></pre></td></tr></table></figure>
+<p>即是是所谓的<code>工厂模式</code></p>
+<ul>
+<li>引入new关键字之后</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Man</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name</span><br><span class="line">    <span class="keyword">this</span>.age = age</span><br><span class="line">    <span class="keyword">this</span>.greet = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hey"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> jack = <span class="keyword">new</span> Man(<span class="string">"jack"</span>, <span class="number">21</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h4><p>  使用上述两种方式存在着诸多问题，例如，在传统的面相对象编程当中，所有实例拥有各自的属性，但共用方法。而在上述两种方式当中，<code>greet()</code>方法在每一次实例化对象时都会被创建，也就是说，每一次实例化一个<code>Man</code>对象，将同时实例化一个<code>Function</code>对象。对性能开销有着不小的影响。</p>
+<p>  因此引入原型模式</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Man</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name</span><br><span class="line">    <span class="keyword">this</span>.age = age</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> _proto = &#123;</span><br><span class="line">    name: <span class="string">"default"</span>,</span><br><span class="line">    age: <span class="number">0</span>,</span><br><span class="line">    greet: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"hey"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Man.prototype = _proto</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> jack = <span class="keyword">new</span> Man(<span class="string">"jack"</span>, <span class="number">21</span>)</span><br></pre></td></tr></table></figure>
+<p>上述方式定义了<code>Man</code>的prototype属性，之后对<code>Man</code>实例化，如果输出<code>jack</code>，会得到</p>
+<blockquote>
+<p>{ name: ‘jack’, age: 21 }  </p>
+</blockquote>
+<p>会发现<code>jack</code>不存在<code>greet</code> 属性，但是如果调用该方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.info(jack.greet())</span><br></pre></td></tr></table></figure>
+<p>会得到</p>
+<blockquote>
+<p>‘hey’</p>
+</blockquote>
+<p>这种现象就是所谓的<code>原型链</code>，对于不存在于当前对象上的属性，将沿着对象的原型对象查找，如果查找存在，则输出。如果对象上定义了原型对象上已存在的属性，则将覆盖，<code>jack</code>的<code>name</code> <code>age</code>属性就是这个道理。因此，我们可以将原型对象看作是一份模板，将构造函数看作是一个机器。每次实例化这个机器就会copy一份该模板的复制品出来。特殊之处在于，复制品未重新定义的属性将沿用模板属性，新定义的属性将覆盖模板属性。因为我们没有重新定义<code>greet</code>方法，因此所有实例都将共用原型对象的<code>greet</code>方法。</p>
+<p>检测某一个对象是不是另一个对象的原型可以使用<code>isPrototypeOf</code>方法</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.info(_proto.isPrototypeOf(jack)) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h4 id="constructor与prototype"><a href="#constructor与prototype" class="headerlink" title="constructor与prototype"></a>constructor与prototype</h4><p>每个对象都包含一个 <code>constructor</code>属性，指向该对象的构造函数，每个函数(包括普通函数)都包含一个<code>prototype</code>属性，指向该构造函数的原型对象</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jack.constructor === Man</span><br></pre></td></tr></table></figure>
+<p>但以上语句将输出</p>
+<blockquote>
+<p>false</p>
+</blockquote>
+<p>但对于以下情况</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Human</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name</span><br><span class="line">    <span class="keyword">this</span>.age = age</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> jerry = <span class="keyword">new</span> Human(<span class="string">"jerry"</span>, <span class="number">20</span>)</span><br><span class="line"><span class="built_in">console</span>.info(jerry.constructor === Human)</span><br><span class="line"><span class="built_in">console</span>.info(Human.prototype)</span><br></pre></td></tr></table></figure>
+<p>以上将输出</p>
+<blockquote>
+<p>true<br>Human {}</p>
+</blockquote>
+<p>此时我们查看<code>Man</code>的<code>prototype</code>属性</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.info(Man.prototype)</span><br><span class="line"><span class="built_in">console</span>.info(jack.constructor === <span class="built_in">Object</span>)</span><br></pre></td></tr></table></figure>
+<p>得到</p>
+<blockquote>
+<p>{ name: ‘default’, age: 0, greet: [Function: greet] }<br>true</p>
+</blockquote>
+<p>可以得知，<code>jack</code>的实例化过程大概如下</p>
+<p><code>Note: 此处仅是简单模拟，并非真实的内部实现，具体请参考ECMA 的RFC</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Man</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> temp = <span class="keyword">new</span> <span class="built_in">Object</span>(&#123;</span><br><span class="line">        name: <span class="string">"default"</span>,</span><br><span class="line">        age:<span class="number">0</span>,</span><br><span class="line">        greet: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"hey"</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">this</span> = temp</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> jack = <span class="keyword">new</span> Man(<span class="string">"jack"</span>, <span class="number">21</span>)</span><br><span class="line"><span class="built_in">console</span>.info(jack.constructor === <span class="built_in">Object</span>) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>因此，jack的<code>constructor</code>将指向<code>Object</code>。</p>
+<p>所以，更有效的探测一个对象是否是某个方法的方式是使用 <code>instanceof</code> 运算符</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.info(jack <span class="keyword">instanceof</span> Man) <span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.info(jerry <span class="keyword">instanceof</span> Human) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<h4 id="SUMMARY"><a href="#SUMMARY" class="headerlink" title="SUMMARY"></a>SUMMARY</h4><p>JavaScript的原型对象包含众多knowledge point。原型链可看作是一棵族谱树，JavaScript对象的实例化与继承都依赖这颗树，对象没有的属性就向上查询原型对象，如此重复，直到Object对象的<code>prototype</code> -&gt; <code>{}</code></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+      
+      
+    </footer>
+    <hr class="entry-footer-hr">
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+  
     <article id="post-use Redux and react-router-dom together"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -828,6 +935,18 @@
               <div class="widget-entry-summary" style="margin: 0;">
             
 
+              <h6 style="margin: 0;"><a href="/2017/11/13/ECMA Script 原型与对象/">ECMA Script 原型与对象</a></h6>
+              <span>November 13, 2017</span>
+            </div>
+
+          </li>
+        
+          <li class="clearfix">
+
+            
+              <div class="widget-entry-summary" style="margin: 0;">
+            
+
               <h6 style="margin: 0;"><a href="/2017/09/06/use Redux and react-router-dom together/">use Redux and react-router-dom together</a></h6>
               <span>September 6, 2017</span>
             </div>
@@ -858,18 +977,6 @@
 
           </li>
         
-          <li class="clearfix">
-
-            
-              <div class="widget-entry-summary" style="margin: 0;">
-            
-
-              <h6 style="margin: 0;"><a href="/2017/06/12/Redux/">Redux</a></h6>
-              <span>June 12, 2017</span>
-            </div>
-
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -888,7 +995,7 @@
     <h3 class="widget-title">Archives</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 
